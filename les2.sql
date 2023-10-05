@@ -148,19 +148,20 @@ select *
 from application
 where Sum > (select avg(sum) from application);
 
-
-
-
-
 -- 26. Знайти клієнтів, які є з того самого міста, що і клієнт, який взяв найбільшу кількість кредитів
 select *
 from client
-         join application a on client.idClient = a.Client_idClient
-where idClient = (select count(*) from application group by Client_idClient order by count(*) desc limit 1);
-
-
+where City = (select City
+              from application
+                       join client c on c.idClient = application.Client_idClient
+              group by Client_idClient
+              order by count(sum) desc
+              limit 1);
 
 -- 27. Місто клієнта з найбільшою кількістю кредитів
-select City from client
-         join application a on client.idClient = a.Client_idClient
-where idClient = (select count(*) from application group by Client_idClient order by count(*) desc limit 1);
+select City
+from client
+where idClient = (select Client_idClient from application group by Client_idClient order by count(sum) desc limit 1);
+
+
+
